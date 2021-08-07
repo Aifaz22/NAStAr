@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="styles.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+</head>
+<body id='Body' style="background-size: cover; background-repeat: no-repeat; background: linear-gradient(90deg, black, navy, grey)" class="info">
+    <div id="sidebar" class="invisible">
+        <div id="sidebar-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul>
+            <li><a href="#" id="APOD" onclick="show(1)">one</a></li>
+            <li><a href="#" id="AsteroidSearch" onclick="show(2)">two</a></li>
+        </ul>
+        
+    </div>
+    
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <div id="content" class="move">
+        <h1>Nasa's Astronomic picture of the da[y](te)</h1>
+        <div id="form-content">
+            <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="checkbox" value="Slideshow" onclick="secondDateDisplay()">
+                <label class="form-check-label" for="checkbox">Slideshow</label>
+            </div>
+            <div id="date-inputs">
+                <input type="date" id="start-date" value="" min="2018-01-01" max="" onchange="updateSDate()">
+                <input type="date" id="end-date" value="" min="2018-01-01" max="" onchange="updateEDate()" readonly>
+            </div>
+        </div>
+        <div id="container">
+            <img id="Image" src="#" >
+            <iframe id="Video" width="630" height="472.5" src="#"></iframe>
+            <div id="Details">
+
+            </div>
+        </div>
+        <div id="container2">
+
+        </div>
+    </div>
+</body>
+</html>
