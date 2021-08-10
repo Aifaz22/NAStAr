@@ -62,18 +62,48 @@ ul li a{
     
 }
 #Image{
-    width: 48%;
-    margin-left: auto;
-    margin-right: auto;
+    width: 40%;
     display: none;
 }
 
 #Video{
-    margin-left: auto;
-    margin-right: auto;
     display: none;
 }
 
+#next, #prev {
+    top: auto;
+    padding-right: 0.5%; padding-left: 0.5;color: white;
+    font-weight: bold;
+    font-size: 50px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0; 
+    display: none;
+}
+
+#next {
+    float: right; 
+}
+#prev {
+    float: left;
+}
+
+#next:hover, #prev:hover{
+    background-color: rgba(6, 129, 109, 0.8);
+}
+
+#container {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    padding-left: 1%;
+    padding-right: 1%;
+
+}
+#Details{
+    background-color: rgba(255, 255, 255, 0.3);
+    padding-left: 1%;
+    padding-right: 1%;
+}
 #sidebar-btn{
     vertical-align: middle;
     width: 35px;
@@ -84,19 +114,19 @@ ul li a{
     padding-bottom: 2px;
     position: absolute;
     right: -60px;
-    
+    border-radius: 40%;    
 }
 #sidebar-btn span{
     height: 1px;
-    width: 75%;
+    width: 70%;
     margin: 3px;
     padding-bottom: 3px;
     display: block;
-    background-color: aliceblue;  
+    background-color: aliceblue; 
 }
 #sidebar-btn span:nth-child(2){
-    width: 60%;  
+    width: 55%;  
 }
 #sidebar-btn span:nth-child(3){
-    width: 45%;  
+    width: 40%;  
 }

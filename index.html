@@ -8,7 +8,7 @@
     <link href="styles.css" rel="stylesheet">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
 </head>
-<body id='Body' style="background-size: cover; background-repeat: no-repeat; background: linear-gradient(90deg, black, navy, grey)" class="info">
+<body id='Body' style="background-size: cover; background-repeat: no-repeat; background: linear-gradient(90deg,black, navy, rgb(61, 61, 61))" class="info">
     <div id="sidebar" class="invisible">
         <div id="sidebar-btn">
             <span></span>
@@ -36,13 +36,15 @@
                 <input type="date" id="end-date" value="" min="2018-01-01" max="" onchange="updateEDate()" readonly>
             </div>
         </div>
-        <div id="container">
-            <img id="Image" src="#" >
-            <iframe id="Video" width="630" height="472.5" src="#"></iframe>
-            <div id="Details">
+        <div id="container" class="fade">
+            <a id="prev" onclick="getFollowingItemData(-1)" >&#10094;</a><img id="Image" src="#" >
+            <iframe id="Video"  src="#"></iframe>
+            <a id="next" onclick="getFollowingItemData(1)" >&#10095;</a>
+            <p id="Details">
 
-            </div>
+            </p>
         </div>
+        
         <div id="container2">
 
         </div>
