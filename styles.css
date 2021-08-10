@@ -5,6 +5,7 @@
 body {
     margin: 0px;
     padding: 0px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 #sidebar {
     background: #092b3dc7;/* rgba(10, 55, 80, 0.8); */

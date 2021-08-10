@@ -44,12 +44,12 @@ const show = function(index){
     const cont2=document.getElementById("container2");
     const pageheader=document.querySelector("h1");
     if (index==1){ //show APOD
-        cont1.style.display="block";
+        cont1.style.display="flex";
         cont2.style.display="none";
         pageheader.innerText="Nasa's Astronomic picture of the da[y](te)";
     } else { //show asteroid search
         cont1.style.display="none";
-        cont2.style.display="block";
+        cont2.style.display="flex";
         pageheader.innerText="Asteroid search";
 
     }
@@ -104,7 +104,7 @@ const display = (data)=>{
         vid.style.display='none';
         img.style.display='block';
         img.src=data.hdurl;
-        des.innerHTML=`<h3>${data.title}<h3>${data.explanation}`;
+        des.innerHTML=`<h2>${data.title}</h2><p style="font-size:18px;">${data.explanation}</p>`;
     }else if (data.media_type=="video"){
         vid.style.display='block';
         vid.width=window.innerWidth*0.5;
