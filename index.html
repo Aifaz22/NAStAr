@@ -27,18 +27,24 @@
     <div id="content" class="move">
         <h1>Nasa's Astronomic picture of the da[y](te)</h1>
         <div id="form-content">
-            <div class="form-check form-switch">
-                <input type="checkbox" class="form-check-input" id="checkbox" value="Slideshow" onclick="secondDateDisplay()">
-                <label class="form-check-label" for="checkbox">Slideshow</label>
+            <div class="SlideshowForm">
+                <input type="checkbox" id="checkbox" value="Slideshow" onclick="secondDateDisplay()">
+                <label for="checkbox">Slideshow</label>
             </div>
             <div id="date-inputs">
+                <label for="start-date">From: </label>
                 <input type="date" id="start-date" value="" min="2018-01-01" max="" onchange="updateSDate()">
-                <input type="date" id="end-date" value="" min="2018-01-01" max="" onchange="updateEDate()" readonly>
+                
+                <label for="end-date" style="padding-left: 1%;">To: </label>
+                <input type="date" id="end-date" value="" min="2018-01-01" max="" readonly>
+
+                <input type="button" id="fetch-btn" value="Fetch Data" onclick="getData()">
             </div>
         </div>
-        <div id="container" class="fade">
-            <a id="prev" onclick="getFollowingItemData(-1)" >&#10094;</a><img id="Image" src="#" >
-            <iframe id="Video"  src="#"></iframe>
+        <div id="container" class="fade" >
+            <a id="prev" onclick="getFollowingItemData(-1)" >&#10094;</a>
+            <img id="Image" src="#" onload="arrowSizeChange()">
+            <iframe id="Video"  src="#" onload="arrowSizeChange()"></iframe>
             <a id="next" onclick="getFollowingItemData(1)" >&#10095;</a>
             <p id="Details">
 

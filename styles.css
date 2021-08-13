@@ -1,5 +1,5 @@
 .info {
-        background-color:rgba(255, 14, 14, 0.7);
+        
         color: bisque;
 }
 body {
@@ -8,7 +8,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 #sidebar {
-    background: #092b3dc7;/* rgba(10, 55, 80, 0.8); */
+    background: #2e2e2ec7;/* rgba(10, 55, 80, 0.8); */
     width: 20%;
     height: 100%;
     position: absolute;
@@ -46,7 +46,7 @@ ul li a:hover{
 }
 
 ul li a{
-    background-color: #0f3e57;
+    background-color: #616060;
     color: beige;
     border-bottom: 1px solid black;
     display: block;
@@ -73,12 +73,14 @@ ul li a{
 
 #next, #prev {
     top: auto;
-    padding-right: 0.5%; padding-left: 0.5;color: white;
+    padding-right: 0.5%; padding-left: 0.5%;color: white;
     font-weight: bold;
     font-size: 50px;
     transition: 0.6s ease;
     border-radius: 0 3px 3px 0; 
     display: none;
+    
+    /* height: 100%; */
 }
 
 #next {
@@ -89,7 +91,7 @@ ul li a{
 }
 
 #next:hover, #prev:hover{
-    background-color: rgba(6, 129, 109, 0.8);
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 #container {
