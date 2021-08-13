@@ -3,23 +3,17 @@ const api_key= config.ApiKey_NASA
 const startDate='&start_date='
 const endDate='&end_date='
 
+/*
+*  Todo :
+    implement divide and conquer for fetch requests
+*/
+
 //today's date formatting
-var today=new Date();
-var yr= (today.getFullYear()).toString();
-var month=today.getMonth()+1;
-var date=today.getDate();
-if (month<10){
-    var mon='0'+month;
-}else{
-    var mon=month.toString();
-}
-if (date<10){
-    var day='0'+date;
-}else{
-    var day=date.toString();
-}
-//date formatted as yyyy-mm-dd
-var date = yr+'-'+mon+'-'+day;
+var date=new Date();
+date=date.toISOString().slice(0,10);
+
+// hashmap for storing session data for quick access (caching)
+const dataMap = new Map();
 
 // required global variables
 var currentDataIndex=0;
@@ -55,44 +49,124 @@ const show = function(index){
     }
 }
 
+// abort controller to abort fetching
+const abortCont= new AbortController();
+const signal=abortCont.signal;
+var running=false;
 // fetch data from the API
 const fetchData = async(sdate='', edate='')=>{
     try {
+        // ***********************************************
+        // if (running){
+        //     console.log('aborting')
+        //     running=false;
+        //     abortCont.abort();
+        // }
+        // ----******************************************
         var response;
+        const obj = searchSessionData(sdate,edate);
+        var data;
         // send requests to fetch data from api using different urls
-        if (sdate==='' && edate===''){
-            console.log(`${APOD_url}${api_key}`);
-            response = await fetch(`${APOD_url}${api_key}`)
-        }else if (edate===''){
-            console.log(`${APOD_url}${api_key}&date=${sdate}`);
-            response = await fetch(`${APOD_url}${api_key}&date=${sdate}`)
-        }else{
-            console.log(`${APOD_url}${api_key}${startDate}${sdate}${endDate}${edate}`);
+        // running=true;
+        if (obj.foundAll==false){ 
+            // sdate=obj.sdate;
+            // edate=obj.edate;
+            document.getElementById('fetch-btn').disabled=true;
+            if (sdate==='' && edate===''){
+                //console.log(`${APOD_url}${api_key}`);
+                sdate=date;
+                response = await fetch(`${APOD_url}${api_key}`, {
+                    signal: signal,
+                })
+            }else if (edate===''){
+                // console.log(`${APOD_url}${api_key}&date=${sdate}`);
+                response = await fetch(`${APOD_url}${api_key}&date=${sdate}`, {
+                    signal: signal,
+                })
+            }else{
 
-            response = await fetch(`${APOD_url}${api_key}${startDate}${sdate}${endDate}${edate}`)
-            currentDataIndex=0;
+                response = await fetch(`${APOD_url}${api_key}${startDate}${sdate}${endDate}${edate}`, {
+                    signal: signal,
+                })
+                currentDataIndex=0;
+            }
+            data = await response.json();
+            if (data instanceof Array){
+                data.forEach(element => {
+                    dataMap.set(element.date,element)
+                });
+            }else{
+                dataMap.set(sdate,data);
+            }
+            document.getElementById('fetch-btn').disabled=false;
+        }else{
+            console.log('used MAP')
+            data=obj.data;
         }
-        
-        const data = await response.json()
         console.log(data);
         // display the data
         display(data);
-        // check if there is a need to display arrows
-        slideshowArrowDisplay();
     } catch (error) {
         console.log(error)
         return 
     }
 }
 
+function searchSessionData(sdate,edate){
+    // get today
+    if (sdate==''){
+        return {
+            'foundAll' : false,
+            'sdate':sdate,
+            'edate':edate,
+            'data':null
+        }
+    }
+    // get only one date
+    else if (edate==''){
+        if (dataMap.get(sdate)==undefined){
+            console.log('got it NOTTTTTTTT')
+            return {
+                'foundAll' : false,
+                'sdate':sdate,
+                'edate':edate,
+                'data':null
+            }
+        }else{
+            console.log('got it!!!!!!!!!!!!!!!!!')
+            return {
+                'foundAll': true,
+                'sdate':sdate,
+                'edate':edate,
+                'data':dataMap.get(sdate)
+            }
+        }
+    }
+    // get range
+    /*
+        - start from the sdate (from where data not in map) and look for the first date=edate in the map after that.
+        - fetch this data. repeat this until actual edate reached and add all the data.
+        - **keep appending the data to the dataArray**
+        - use parse date to get date from string
+        - use date.toISOString().slice(0,10) to get date to into required string format
+
+        basically divide them based on availability and then just fetch what is required
+    */
+    console.log('got it NOTTTTTTTT 2')
+    return {
+        'foundAll' : false,
+        'sdate':sdate,
+        'edate':edate,
+        'data':null
+    }
+}
 
 // displays the contents fetched according to the type of the media
 const display = (data)=>{
     var img=document.getElementById('Image');
     var vid=document.getElementById('Video');
     var des=document.getElementById('Details');
-    //check for slideshow arrow requirement
-    slideshowArrowDisplay();
+    
 
     //if data is Array, then choose the first one and display that and store the data in an array
     if (data instanceof Array){
@@ -101,16 +175,22 @@ const display = (data)=>{
     }
     //display image or iframe based on the media type
     if (data.media_type=="image"){
+        
         vid.style.display='none';
         img.style.display='block';
         img.src=data.hdurl;
         des.innerHTML=`<h2>${data.title}</h2><p style="font-size:18px;">${data.explanation}</p>`;
+        //check for slideshow arrow requirement
+        // console.log('h=========='+img.height);
+        slideshowArrowDisplay(img.height);
     }else if (data.media_type=="video"){
         vid.style.display='block';
         vid.width=window.innerWidth*0.5;
         vid.height=window.innerHeight*0.5;
         img.style.display='none';
         vid.src=data.url;
+        //check for slideshow arrow requirement
+        slideshowArrowDisplay(vid.height);
     }
     
 }
@@ -127,6 +207,19 @@ document.getElementById('sidebar-btn').addEventListener('click',()=>{
     }    
 })
 
+function getData(){
+    const sDateElement=document.getElementById('start-date');
+    const eDateElement=document.getElementById('end-date');
+    //if checkbox is checked(end-date visible) fetch multiple
+    if (eDateElement.readOnly===false){
+        fetchData(sDateElement.value,eDateElement.value);
+    }
+    // else fetch the start-date img
+    else {
+        // console.log('date value ======='+sDateElement.value);
+        fetchData(sDateElement.value);
+    }
+}
 
 // when startDate is updated
 const updateSDate = function(){
@@ -136,25 +229,7 @@ const updateSDate = function(){
     // check if end date is earlier that start date, if so correct it
     if (eDateElement.min>eDateElement.value){
         eDateElement.value=eDateElement.min;
-    }
-    //if checkbox is checked(end-date visible) fetch multiple
-    if (eDateElement.readOnly===false){
-        fetchData(sDateElement.value,eDateElement.value);
-    }
-    // else fetch the start-date img
-    else {
-        console.log('date value ======='+sDateElement.value);
-        fetchData(sDateElement.value);
-    }
-    
-}
-
-// when end date is updated
-const updateEDate= ()=>{
-    // fetch multiple images
-    const sDateElement=document.getElementById('start-date');
-    const eDateElement=document.getElementById('end-date');
-    fetchData(sDateElement.value,eDateElement.value);
+    }    
 }
 
 // displays/hides end-date input based on checkbox
@@ -170,7 +245,7 @@ const secondDateDisplay=function(){
     */
     if (checkbox.checked){
         edate.readOnly=false;
-        fetchData(sdate.value,edate.value);
+        //fetchData(sdate.value,edate.value);
     }else{
         edate.readOnly=true;
         sdate.value=dataArray[currentDataIndex].date;
@@ -180,17 +255,36 @@ const secondDateDisplay=function(){
 }
 
 
-const slideshowArrowDisplay = ()=>{
+const slideshowArrowDisplay = (height)=>{
     /*
      * displays slideshow arrows only if there is more than 1 pic to show 
      */
-    if (dataArray.length>1){
-        document.getElementById('next').style.display='block';
-        document.getElementById('prev').style.display='block';
+    var next=document.getElementById('next');
+    var prev=document.getElementById('prev');
+    if (dataArray.length>1 && document.getElementById('checkbox').checked){
+        next.style.display='block';        
+        prev.style.display='block';
     }else{
-        document.getElementById('next').style.display='none';
-        document.getElementById('prev').style.display='none';
+        next.style.display='none';
+        prev.style.display='none';
     }
+}
+
+function arrowSizeChange(){
+    var height = document.getElementById('Image').height;
+    var next=document.getElementById('next');
+    var prev=document.getElementById('prev');
+    if (document.getElementById('Image').style.display=='none'){
+        height = 316;
+        //document.getElementById('Video').height;
+    } 
+    console.log(height);
+    next.style.height=`${height}px`;
+    prev.style.height=`${height}px`;
+
+    // set lineheight such that arrow appear slightly above the center 
+    next.style.lineHeight=`${height*0.75}px`;
+    prev.style.lineHeight=`${height*0.75}px`;
 }
 
 const getFollowingItemData =(i)=>{
