@@ -1,12 +1,12 @@
+/*
+* Author: Aifaz Dhuka
+* Project: NAStAr => single page app that interacts with NASA's API and also uses hashmap.
+*/
 const APOD_url= 'https://api.nasa.gov/planetary/apod?api_key='
 const api_key= config.ApiKey_NASA
 const startDate='&start_date='
 const endDate='&end_date='
 
-/*
-*  Todo :
-    Implement page 2
-*/
 
 //today's date formatting
 var date=new Date();
@@ -38,15 +38,17 @@ const show = function(index){
     const cont1=document.getElementById("container");
     const cont2=document.getElementById("container2");
     const pageheader=document.querySelector("h1");
+    const form = document.getElementById("form-content");
     if (index==1){ //show APOD
         cont1.style.display="flex";
+        form.style.display="block";
         cont2.style.display="none";
         pageheader.innerText="Nasa's Astronomic picture of the da[y](te)";
     } else { //show asteroid search
         cont1.style.display="none";
-        cont2.style.display="flex";
-        pageheader.innerText="Asteroid search";
-
+        cont2.style.display="block";
+        form.style.display="none"
+        pageheader.innerText="About NAStAr";
     }
 }
 
@@ -71,7 +73,6 @@ const display = (data)=>{
         img.src=data.hdurl;
         des.innerHTML=`<h2>${data.title}</h2><p style="font-size:18px;">${data.explanation}</p>`;
         //check for slideshow arrow requirement
-        // console.log('h=========='+img.height);
         slideshowArrowDisplay(img.height);
     }else if (data.media_type=="video"){
         vid.style.display='block';
@@ -81,8 +82,12 @@ const display = (data)=>{
         vid.src=data.url;
         //check for slideshow arrow requirement
         slideshowArrowDisplay(vid.height);
+        des.innerHTML=`<h2>${data.title}</h2><p style="font-size:18px;">${data.explanation}</p>`;
+
     }
-    
+    if (data.copyright!=undefined){ // add copyright if it exists
+        des.innerHTML+=`<h4>Copyright: ${data.copyright}<h4>`;
+    }
 }
 
 // when sidebar btn is clicked
@@ -123,7 +128,6 @@ const secondDateDisplay=function(){
     */
     if (checkbox.checked){
         edate.readOnly=false;
-        //fetchData(sdate.value,edate.value);
     }else{
         edate.readOnly=true;
         sdate.value=dataArray[currentDataIndex].date;
@@ -148,15 +152,14 @@ const slideshowArrowDisplay = (height)=>{
     }
 }
 
+// updates arrow sizes for the images based on their size
 function arrowSizeChange(){
     var height = document.getElementById('Image').height;
     var next=document.getElementById('next');
     var prev=document.getElementById('prev');
     if (document.getElementById('Image').style.display=='none'){
         height = 316;
-        //document.getElementById('Video').height;
-    } 
-    // console.log(height);
+    }
     next.style.height=`${height}px`;
     prev.style.height=`${height}px`;
 
@@ -165,6 +168,7 @@ function arrowSizeChange(){
     prev.style.lineHeight=`${height*0.75}px`;
 }
 
+// display the next or previous image for the slideshow
 const getFollowingItemData =(i)=>{
     
     if (currentDataIndex+i <0){ // handles negative index scenarios
@@ -194,13 +198,14 @@ function getData(){
     }
 }
 
+// search for data withing the map first before fetching from api
 async function searchSessionData(sdate='',edate=''){
     var data;
     console.log('checking sessions data...')
-    // get only one date
+    // get today's image
     if (sdate==''  ){
         data= await fetchData();
-    }
+    } // get that particular date (sdate)
     else if (edate==''){
         if (dataMap.get(new Date(sdate).toISOString().slice(0,10))==undefined){
             console.log('got it NOTTTTTTTT')
@@ -218,9 +223,9 @@ async function searchSessionData(sdate='',edate=''){
         // weave all data
         data=[];
         var allDatesinrange= getAllDates(new Date(sdate), new Date(edate));
-        allDatesinrange.forEach(keyDate =>{
+        for (const keyDate of allDatesinrange){
              data.push(dataMap.get(keyDate));
-        });
+        };
         
     }
     try{
@@ -239,39 +244,46 @@ const fetchData = async(sdate='', edate='')=>{
         var response;
         var data;
 
-        // send requests to fetch data from api using different urls
+        // send requests to fetch data from api using different urls based on the function args
         document.getElementById('fetch-btn').disabled=true;
-        if (sdate==='' && edate===''){
+        if (sdate==='' && edate===''){ //get today
             sdate=date;
             response = await fetch(`${APOD_url}${api_key}`);
-        }else if (edate===''){
+        }else if (edate===''){ // get sdate's pic of the day
             response = await fetch(`${APOD_url}${api_key}&date=${sdate}`);
-        }else{
-            console.log(1);
+        }else{ // get a all the pic of the day's from sdate to edate
             response = await fetch(`${APOD_url}${api_key}${startDate}${sdate}${endDate}${edate}`)
-            currentDataIndex=0;
+            currentDataIndex=0; //set data array index to 0 for slideshow purpose.
         }
         data = await response.json();
         if (data instanceof Array){
-            data.forEach(async element => {
-                await dataMap.set(new Date(element.date).toISOString().slice(0,10),element);
-            });
+            for (const element of data) {
+                dataMap.set(new Date(element.date).toISOString().slice(0,10),element);
+            };
         }else{
             dataMap.set(new Date(sdate).toISOString().slice(0,10),data);
         }
-        document.getElementById('fetch-btn').disabled=false;
-        console.log(3);
+        document.getElementById('fetch-btn').disabled=false; // let user fetch new data now
 
         return data;
     } catch (error) {
         console.log(error)
+        document.getElementById('details').innerHTML="<h1>Error fetching</h1>"
+        document.getElementById('fetch-btn').disabled=false; // let user fetch new data now
         return 
     }
 }
 
 
+const surprise = ()=>{ // adds text to the title in about. (Easiest easter egg)
+    document.getElementById("WhatDidIDoSurprise").innerHTML+="I learnt JavaScript and this is my first project with it. Note to self: Foreach != for loop"
+}
 
+const surpriseOver = ()=>{
+    document.getElementById("WhatDidIDoSurprise").innerHTML="What did I do?"
+}
 
+// returns an array populated with dates between the two dates
 const getAllDates = (sdate,edate)=>{
     const result=[];
     var current=sdate;
@@ -289,8 +301,7 @@ const nextDay = (current)=>{
     return nextDate;
 }
 
-
-
+// gets the range of dates that are not present in the hashmap
 const getUnseenDates = (sdate,edate)=>{
     const resultingDates = [];
     var rangeDates={
@@ -300,7 +311,6 @@ const getUnseenDates = (sdate,edate)=>{
     var current = sdate;
     var previousDate;
     
-    // console.log(`${current}`)
     while (current<edate){
         // if not in hashmap, add date to the rangeDate Array
         if (dataMap.get(current.toISOString().slice(0,10))==undefined){
@@ -330,187 +340,3 @@ const getUnseenDates = (sdate,edate)=>{
     }
     return resultingDates;
 }
-
-
-
-
-/* ************************************************************
-
-// fetch data from the API
-const fetchData = async(sdate='', edate='', search=true)=>{
-    try {
-        console.log('fetching...')
-        var response;
-        var obj={
-            'foundAll' : false,
-            'sdate':sdate,
-            'edate':edate,
-            'data':null
-        }
-        if (search){
-            obj = searchSessionData(sdate,edate);
-        }
-        var data;
-
-        // send requests to fetch data from api using different urls
-        if (obj.foundAll==false){ 
-            // sdate=obj.sdate;
-            // edate=obj.edate;
-            document.getElementById('fetch-btn').disabled=true;
-            if (sdate==='' && edate===''){
-                //console.log(`${APOD_url}${api_key}`);
-                sdate=date;
-                response = await fetch(`${APOD_url}${api_key}`)
-            }else if (edate===''){
-                // console.log(`${APOD_url}${api_key}&date=${sdate}`);
-                response = await fetch(`${APOD_url}${api_key}&date=${sdate}`)
-            }else{
-
-                response = await fetch(`${APOD_url}${api_key}${startDate}${sdate}${endDate}${edate}`)
-                currentDataIndex=0;
-            }
-            data = await response.json();
-            if (data instanceof Array){
-                data.forEach(element => {
-                    if (element.date instanceof String) dataMap.set(element.date,element);
-                    else dataMap.set(element.date.toString(),element);
-                });
-            }else{
-                dataMap.set(sdate,data);
-            }
-            document.getElementById('fetch-btn').disabled=false;
-        }else{
-            console.log('used MAP')
-            data=obj.data;
-        }
-        console.log('data =');
-        console.log(data);
-        // display the data
-        display(data);
-    } catch (error) {
-        console.log(error)
-        return 
-    }
-}
-
-function searchSessionData(sdate,edate){
-    // get today
-    if (sdate==''){
-        return {
-            'foundAll' : false,
-            'sdate':sdate,
-            'edate':edate,
-            'data':null
-        }
-    }
-    // get only one date
-    else if (edate==''){
-        if (dataMap.get(sdate)==undefined){
-            console.log('got it NOTTTTTTTT')
-            return {
-                'foundAll' : false,
-                'sdate':sdate,
-                'edate':edate,
-                'data':null
-            }
-        }else{
-            console.log('got it!!!!!!!!!!!!!!!!!')
-            return {
-                'foundAll': true,
-                'sdate':sdate,
-                'edate':edate,
-                'data':dataMap.get(sdate)
-            }
-        }
-    }
-    // get range
-    var unseenDates=getUnseenDates(new Date(sdate),new Date(edate));
-    console.log(unseenDates);
-    unseenDates.forEach(range => {
-        fetchData(range.start,range.end, false);
-    });
-    // weave all data
-    const data=[];
-    var allDatesinrange= getAllDates(new Date(sdate), new Date(edate));
-    for (let index = 0; index < allDatesinrange.length; index++) {
-        const element = allDatesinrange[index];
-        console.log(typeof element);
-    }
-    console.log('**********************************************')
-    console.log(allDatesinrange)
-    var a=dataMap.get(sdate);
-    console.log(a)
-    console.log(dataMap)
-    console.log('**********************************************')
-    // concat data
-    return {
-        'foundAll' : true,
-        'sdate':sdate,
-        'edate':edate,
-        'data':data
-    }
-}
-
-
-const getAllDates = (sdate,edate)=>{
-    const result=[];
-    var current=sdate;
-    while (current<=edate){
-        result.push(current.toISOString().slice(0,10));
-        current=nextDay(current)
-    }
-    return result;
-}
-
-// next day function call that returns the next day
-    // the first argument for the call func would be `this` in this context
-    // eg. nextDay.call(today) =>  today will be this and nextDate=today
-const nextDay = (current)=>{
-    const nextDate=new Date(current);
-    nextDate.setDate(nextDate.getDate()+1);
-    return nextDate;
-}
-
-
-
-const getUnseenDates = (sdate,edate)=>{
-    const resultingDates = [];
-    var rangeDates={
-        'start':undefined,
-        'end':undefined
-    };
-    var current = sdate;
-    var previousDate;
-    
-    console.log(`${current}`)
-    while (current<edate){
-        // if not in hashmap, add date to the rangeDate Array
-        if (dataMap.get(current.toISOString().slice(0,10))==undefined){
-            if (rangeDates.start==undefined){// check if the start date of range is added
-                rangeDates.start=current.toISOString().slice(0,10);
-            }
-            previousDate=current;
-        }else{ // if it is in hashmap, push the array of dates to 
-            if (rangeDates.start!=undefined){
-                rangeDates.end=previousDate.toISOString().slice(0,10);
-                resultingDates.push(rangeDates);
-            }
-            rangeDates={
-                'start':undefined,
-                'end':undefined
-            };
-        }
-        current=nextDay(current);
-    }
-    if (rangeDates.start!=undefined){
-        rangeDates.end=current.toISOString().slice(0,10);
-        resultingDates.push(rangeDates);
-        rangeDates={
-            'start':undefined,
-            'end':undefined
-    };
-    }
-    return resultingDates;
-}
-
-************************************************************ */

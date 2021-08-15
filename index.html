@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="styles.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
 </head>
-<body id='Body' style="background-size: cover; background-repeat: no-repeat; background: linear-gradient(90deg,black, navy, rgb(61, 61, 61))" class="info">
+<body id='Body'>
     <div id="sidebar" class="invisible">
         <div id="sidebar-btn">
             <span></span>
@@ -16,8 +15,8 @@
             <span></span>
         </div>
         <ul>
-            <li><a href="#" id="APOD" onclick="show(1)">one</a></li>
-            <li><a href="#" id="AsteroidSearch" onclick="show(2)">two</a></li>
+            <li><a href="#" id="APOD" onclick="show(1)">Astronomic Pic Of The Day</a></li>
+            <li><a href="#" id="About" onclick="show(2)">About</a></li>
         </ul>
         
     </div>
@@ -51,8 +50,30 @@
             </p>
         </div>
         
-        <div id="container2">
-
+        <div id="container2" style="text-align: justify; padding: 5%; font-size: large; display: none;">
+            <p>
+                NAStAr is a small project created using Javascript, HTML and CSS. This is a single page application that helps you find the Astronomic Picture of a particular date rated by NASA.
+                It uses the NASA's API and displays it.
+            </p>
+            <p >
+                <h3>Features:</h3>
+                <ol>
+                    <li>Ability to change Date (its obvious but I just felt like mentioning it :) )</li>
+                    <li>Ability to have a Slideshow</li>
+                    <li>A sidebar to show you different pages (I know you know this and it is the reason you are able to read this but you can help but read it and you are still reading ;) )</li>
+                </ol>
+            </p>
+            <p>
+                <h3 style="width: max-content;" onmouseover="surprise()" onmouseleave="surpriseOver()" id="WhatDidIDoSurprise">What did I do?</h3>
+                One may ask me, Aifaz, what all "technical" knowledge you used for this? I'd say not much.. To start of
+                I had a look at the api and its endpoints and decided on a few queries I will be working on. Then I create a rough design of how the application should look and then started working on it.
+                The application is based on the three languages: HTML, CSS and JavaScript. 
+                Additionally, it can be a bit slow if you want to switch between two images back and forth many times (I don't know why you want to, but suppose), it is not ideal to
+                send requests to the NASA's Api again and again and it can be a bit slow, also we might not know when it might get overloaded (attackers be planning ddos attack randomly). 
+                So I used a Hashmap (dictionary in python). It basically has a key and a value. To access the Value, you must know the key. Also, hashmaps give back the value very quickly even though
+                there is a lot of kay-value pairs stored. So during every session, all the data you request get stored in that for faster access. Further, I could have cached it so that every time you visit 
+                the page, you don't send requests every time you visit to get the priously fetched data (unless you clear out your cache). So that is all about the page folks!
+            </p>
         </div>
     </div>
 </body>
