@@ -50,6 +50,17 @@ const show = function(index){
         form.style.display="none"
         pageheader.innerText="About NAStAr";
     }
+    toggleSidebar();
+}
+function toggleSidebar(){
+    //toggle the sidebar
+    const sidebar=document.getElementById('sidebar');
+    
+    if (sidebar.className=='invisible') {
+        sidebar.className='visible';
+    } else {
+        sidebar.className='invisible';
+    }    
 }
 
 // displays the contents fetched according to the type of the media
@@ -170,15 +181,39 @@ function arrowSizeChange(){
 
 // display the next or previous image for the slideshow
 const getFollowingItemData =(i)=>{
+    var img = document.getElementById("Image");
+    var vid = document.getElementById("Video");
     
     if (currentDataIndex+i <0){ // handles negative index scenarios
         currentDataIndex=dataArray.length+(currentDataIndex+i);
+        
     }else{ // handles positive index scenarios
         currentDataIndex= (currentDataIndex+i)%(dataArray.length);
     }
 
     // display new data
-    display(dataArray[currentDataIndex]);
+    if (i>0){
+        img.classList.add("moveLeft");
+        vid.classList.add("moveLeft");
+        display(dataArray[currentDataIndex]);
+        setTimeout(()=>{
+            img.classList.remove("moveLeft");
+            vid.classList.remove("moveLeft");
+        }, 1000);
+    }else{
+        img.classList.add("moveRight");
+        vid.classList.add("moveRight");
+        display(dataArray[currentDataIndex]);
+        setTimeout(()=>{
+            img.classList.remove("moveRight");
+            vid.classList.remove("moveRight");
+        }, 1000);
+    }
+    document.getElementById("Details").classList.add("changeDetails");
+    setTimeout(()=>{
+        document.getElementById("Details").classList.remove("changeDetails");
+    },1000)
+    
 
 }
 
@@ -202,9 +237,20 @@ function getData(){
 async function searchSessionData(sdate='',edate=''){
     var data;
     console.log('checking sessions data...')
+    const img = document.getElementById("Image");
+    const vid =document.getElementById("Video");
+    const det =document.getElementById("Details");
     // get today's image
     if (sdate==''  ){
         data= await fetchData();
+        img.classList.add("newDetails");
+        vid.classList.add("newDetails");
+        det.classList.add("newDetails");
+        setTimeout(()=>{
+            img.classList.remove("newDetails");
+            vid.classList.remove("newDetails");
+            det.classList.remove("newDetails");
+        }, 1000);
     } // get that particular date (sdate)
     else if (edate==''){
         if (dataMap.get(new Date(sdate).toISOString().slice(0,10))==undefined){
@@ -214,6 +260,14 @@ async function searchSessionData(sdate='',edate=''){
             console.log('got it!!!!!!!!!!!!!!!!!')
             data=dataMap.get(sdate);
         }
+        img.classList.add("changeDetails");
+        vid.classList.add("changeDetails");
+        det.classList.add("changeDetails");
+        setTimeout(()=>{
+            img.classList.remove("changeDetails");
+            vid.classList.remove("changeDetails");
+            det.classList.remove("changeDetails");
+        }, 1000);
     }else{
         // get range
         var unseenDates=getUnseenDates(new Date(sdate),new Date(edate));
@@ -276,7 +330,7 @@ const fetchData = async(sdate='', edate='')=>{
 
 
 const surprise = ()=>{ // adds text to the title in about. (Easiest easter egg)
-    document.getElementById("WhatDidIDoSurprise").innerHTML+="I learnt JavaScript and this is my first project with it. Note to self: Foreach != for loop"
+    document.getElementById("WhatDidIDoSurprise").innerHTML+="&nbsp;&nbsp;&nbsp;&nbsp; I learnt JavaScript and this is my first project with it."
 }
 
 const surpriseOver = ()=>{

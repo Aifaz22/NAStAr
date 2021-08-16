@@ -11,7 +11,7 @@ body {
 
 /* Sidebar */
 #sidebar {
-    background: #2e2e2ec7;/* rgba(10, 55, 80, 0.8); */
+    background: #fffdfd70;/* rgba(10, 55, 80, 0.8); */
     width: 20%;
     height: 100%;
     position: absolute;
@@ -24,6 +24,100 @@ body {
     left:0%;
     transition: left 0.2s linear;
     position: fixed;
+}
+.moveLeft{
+    animation-name: nextMediaAnimation;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+@keyframes nextMediaAnimation {
+    0% {
+      transform: translate(0%);
+    }
+    50% {
+      transform: translate(-200%) scale(10%);
+    }
+    50.1%{
+        transform: translate(200%) scale(10%);
+    }
+    100% {
+        transform: translate(0%) scale(100%);
+    }
+}
+.moveRight{
+    animation-name: prevMediaAnimation;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes prevMediaAnimation {
+    0% {
+      transform: translate(0%);
+    }
+    50% {
+      transform: translate(200%) scale(10%);
+    }
+    50.1%{
+        transform: translate(-200%) scale(10%);
+    }
+    100% {
+        transform: translate(0%) scale(100%);
+    }
+}
+
+#form-content{
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 70%;
+    left: 50%;
+    padding-top: 1%;
+    padding-bottom: 2%;
+}
+
+
+.changeDetails{
+    animation-name: shrinkGrow;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes shrinkGrow {
+    0%{
+        transform: scale(100%);
+    }
+    50%{
+        transform: scale(0%);
+    }
+    90%{
+        transform: scale(110%);
+    }
+    100%{
+        transform: scale(100%);
+    }
+}
+
+.newDetails{
+    animation-name: grow;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+@keyframes grow {
+    0%{
+        transform: scale(0%);
+    }
+    90%{
+        transform: scale(110%);
+    }
+    100%{
+        transform: scale(100%);
+    }
 }
 ul {
     margin-top: 15%;
@@ -40,7 +134,7 @@ ul li a:hover{
 }
 
 ul li a{
-    background-color: #616060;
+    background-color: #0000006e;
     color: beige;
     border-bottom: 1px solid black;
     display: block;
@@ -55,7 +149,7 @@ ul li a{
     width: 35px;
     height: 25px;
     margin: 2%;
-    background-color: #1870a0;
+    
     padding-top: 2px;
     padding-bottom: 2px;
     position: absolute;
@@ -69,12 +163,6 @@ ul li a{
     padding-bottom: 3px;
     display: block;
     background-color: aliceblue; 
-}
-#sidebar-btn span:nth-child(2){
-    width: 55%;  
-}
-#sidebar-btn span:nth-child(3){
-    width: 40%;  
 }
 
 /* Content of Page1 */
